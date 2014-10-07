@@ -1,0 +1,17 @@
+<package>
+  <description brief="PanTiltGrabber">
+
+     PanTiltGrabber
+
+  </description>
+  <author>Mario</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/PanTiltGrabber</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <depend package="image_transport"/>
+  <rosdep name="ieee1394libraries"/>
+</package>
+
+
