@@ -1,7 +1,14 @@
+/*
+ * Este programa es un ejemplo de servidor para ROS que realiza movimientos
+ * de pan y tilt a petición de un mensaje de ROS cada 5hz.
+ *
+ *  Created on: 15/11/2012
+ *      Author: dfornas
+ */
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "PanTiltController.h"
+#include <pan_tilt_camera_teleop/PanTiltController.h>
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
@@ -10,6 +17,7 @@ ros::Subscriber pt_sub;
 PanTiltController ptc;
 sensor_msgs::JointState js;
 
+///Empezar el movimiento indicado por el mensaje
 void issue_mv(){
 
   if(js.position.size()==0)return;
@@ -22,69 +30,14 @@ void issue_mv(){
   else if(pan>0) ptc.right();
 
 }
+
+///Si el mensaje es correcto lo copia
 void moveCamera(const sensor_msgs::JointState & mv)
 {
   ROS_ERROR("RECIBIDO");
   if(mv.position.size()!=2)return;
   js=mv;
-
-
-  //      ptc.teleStart();
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_X:
-  //      ptc.wideStart();
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_Q:
-  //      ptc.focusNearStart();
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_E:
-  //      ptc.focusFarStart();
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_1:
-  //      ptc.setPreset("01");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_2:
-  //      ptc.setPreset("02");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_3:
-  //      ptc.setPreset("03");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_4:
-  //      ptc.setPreset("04");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_5:
-  //      ptc.callPreset("01");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_6:
-  //      ptc.callPreset("02");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_7:
-  //      ptc.callPreset("03");
-  //      dirty = true;
-  //      break;
-  //    case KEYCODE_8:
-  //      ptc.callPreset("04");
-  //      dirty = true;
-  //      break;
-  //    default:
-  //      dirty = false;
-  //  }
-  //
-  //}
-
-
-
-  }
+}
 
 int main(int argc, char** argv)
 {
@@ -100,8 +53,6 @@ int main(int argc, char** argv)
     //cuando ser recibe algo en esa función hacer ya el start & stop en función de los grados 
     //que se desea mover porque aquí según cuando se recibe el mensaje hace que 
     //el tiempo se variable porque no se frena 30 ms más tarde, sino cada 30ms se hace un stop...
-
-
     issue_mv();
     ros::spinOnce();
     loop_rate.sleep();

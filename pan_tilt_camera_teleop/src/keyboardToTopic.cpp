@@ -1,3 +1,10 @@
+/*
+ * Este programa publica en un mensaje del tipo JointState el pan y tilt
+ * deseado que se ha leído por teclado. Es un ejemplo de cliente.
+ *
+ *  Created on: 15/11/2012
+ *      Author: dfornas
+ */
 #include <termios.h>
 #include <signal.h>
 #include <math.h>
@@ -41,10 +48,6 @@ class PanTiltKeyboardTeleopNode
             pub_ = n_.advertise<sensor_msgs::JointState>("panTilt", 1);
             
             ros::NodeHandle n_private("~");
-            //n_private.param("walk_vel", walk_vel_, 0.5);
-         //   n_private.param("run_vel", run_vel_, 1.0);
-         //   n_private.param("yaw_rate", yaw_rate_, 1.0);
-         //   n_private.param("yaw_rate_run", yaw_rate_run_, 1.5);
             js.name.push_back("pan");
             js.name.push_back("tilt");
             js.position.push_back(0.0);
@@ -55,9 +58,7 @@ class PanTiltKeyboardTeleopNode
         ~PanTiltKeyboardTeleopNode() { }
         void keyboardLoop();
         void stopCamera(){
-          //js.position[0]=0.0;
-          //js.position[1]=0.0;
-          //pub_.publish(js);
+
         }
         
 };
@@ -161,57 +162,7 @@ void PanTiltKeyboardTeleopNode::keyboardLoop()
                   pub_.publish(js);
                 dirty = true;
                 break;
-            //case KEYCODE_W_CAP:
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_Z:
-            //    ptc.teleStart();
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_X:
-            //    ptc.wideStart();
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_Q:
-            //    ptc.focusNearStart();
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_E:
-            //    ptc.focusFarStart();
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_1:
-            //    ptc.setPreset("01");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_2:
-            //    ptc.setPreset("02");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_3:
-            //    ptc.setPreset("03");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_4:
-            //    ptc.setPreset("04");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_5:
-            //    ptc.callPreset("01");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_6:
-            //    ptc.callPreset("02");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_7:
-            //    ptc.callPreset("03");
-            //    dirty = true;
-            //    break;
-            //case KEYCODE_8:
-            //    ptc.callPreset("04");
-            //    dirty = true;
-            //    break;
+
             default:
                 dirty = false;
         }

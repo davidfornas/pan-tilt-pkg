@@ -27,6 +27,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+/*
+ * Este programa permite probar las posibilidades de la camara por teclado.
+ * Es un ejemplo de programa que es cliente y servidor a la vez.
+ *
+ *  Modified on: 15/11/2012
+ *       dfornas
+ */
 
 #include <termios.h>
 #include <signal.h>
@@ -35,7 +43,7 @@
 #include <stdlib.h>
 #include <sys/poll.h>
 
-#include "PanTiltController.h"
+#include <pan_tilt_camera_teleop/PanTiltController.h>
 
 #include <boost/thread/thread.hpp>
 #include <ros/ros.h>
@@ -70,13 +78,7 @@ class PanTiltKeyboardTeleopNode
   public:
     PanTiltKeyboardTeleopNode()
     {
-      //pub_ = n_.advertise<geometry_msgs::Twist>("cmd_vel", 1);
-
       ros::NodeHandle n_private("~");
-      //n_private.param("walk_vel", walk_vel_, 0.5);
-      //   n_private.param("run_vel", run_vel_, 1.0);
-      //   n_private.param("yaw_rate", yaw_rate_, 1.0);
-      //   n_private.param("yaw_rate_run", yaw_rate_run_, 1.5);
       ptc.setPreset("01");
     }
 
@@ -181,9 +183,6 @@ void PanTiltKeyboardTeleopNode::keyboardLoop()
         ptc.right();
         dirty = true;
         break;
-        //case KEYCODE_W_CAP:
-        //    dirty = true;
-        //    break;
       case KEYCODE_Z:
         ptc.teleStart();
         dirty = true;

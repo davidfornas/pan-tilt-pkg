@@ -1,4 +1,12 @@
-#include "PanTiltController.h"
+/*
+ * Programa de tracking utilizando la cámara pan-tilt. Es un buen comienzo
+ * para utilizar otros algoritmos de tracking. También se comunica directamente con la cámara.
+ * Deberá ser un cliente.
+ *
+ *  Created on: 15/11/2012
+ *      Author: dfornas
+ */
+#include <pan_tilt_camera_teleop/PanTiltController.h>
 #include "time.h"
 
 #include <visp/vpImage.h>

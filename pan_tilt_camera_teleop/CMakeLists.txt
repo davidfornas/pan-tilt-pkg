@@ -5,6 +5,8 @@ find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs geometry_msgs mar_per
 find_package(VISP REQUIRED)
 
 catkin_package(
+  INCLUDE_DIRS
+    include
   CATKIN_DEPENDS
     roscpp
     sensor_msgs
@@ -13,16 +15,14 @@ catkin_package(
   DEPENDS
     VISP
 )
-include_directories(${PROJECT_SOURCE_DIR}/include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(keyboard src/keyboard.cpp src/PanTiltController.cpp)
-add_executable(auto src/auto.cpp src/PanTiltController.cpp)
 add_executable(keyboardToTopic src/keyboardToTopic.cpp src/PanTiltController.cpp)
 add_executable(listener src/main.cpp src/PanTiltController.cpp)
 add_executable(vs src/esm_vs_2d.cpp src/PanTiltController.cpp)
 
 target_link_libraries(keyboard ${catkin_LIBRARIES})
-target_link_libraries(auto ${catkin_LIBRARIES})
 target_link_libraries(keyboardToTopic ${catkin_LIBRARIES})
 target_link_libraries(listener ${catkin_LIBRARIES})
 target_link_libraries(vs ${catkin_LIBRARIES})

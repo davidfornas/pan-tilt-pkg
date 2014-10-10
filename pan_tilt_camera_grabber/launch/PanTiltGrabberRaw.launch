@@ -3,7 +3,7 @@
   <param name="subsample" value="1" type="int"/>
   
   <!-- PanTiltGrabber  -->
-  <node pkg="PanTiltGrabber" type="PanTiltGrabber" name="PanTiltGrabber">
+  <node pkg="pan_tilt_camera_grabber" type="pan_tilt_grabber" name="pan_tilt_grabber">
     <remap from="/panTilt/camera" to="/panTilt/image_raw"/>
   </node>
 

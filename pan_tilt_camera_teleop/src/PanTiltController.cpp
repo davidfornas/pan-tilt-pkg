@@ -1,9 +1,11 @@
-/////////////////////////////////////////////////
-// Pan Tilt camera controller                  //
-/////////////////////////////////////////////////
-
-
-#include "PanTiltController.h"
+/*
+ * Pan tilt camera controller. Todas las funciones que tienen start&stop
+ * se utilizan para empezar un movimiento y pararlo al tiempo.
+ *
+ *  Created on: 15/11/2012
+ *      Author: dfornas
+ */
+#include <pan_tilt_camera_teleop/PanTiltController.h>
 using namespace std;
 
 PanTiltController::PanTiltController(){
