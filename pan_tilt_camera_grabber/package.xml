@@ -1,0 +1,31 @@
+<package>
+  <description>
+
+     This package provides a grabber to a image stream from FireWire.
+     This is a copy of ARM5Grabber from ARM5E metapackage.
+
+  </description>
+  
+  <name>pan_tilt_camera_grabber</name>
+  <version>0.1.1</version>
+
+  <author email="marioprats@gmail.com">Mario Prats</author>
+  <maintainer email="dfornas@uji.es">David Fornas</maintainer>
+  <license>BSD</license>
+  
+  <url>http://ros.org/wiki/pan_tilt_camera_grabber</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+ 
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>  
+  <build_depend>image_transport</build_depend>
+  <build_depend>ieee1394libraries</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>  
+  <run_depend>image_transport</run_depend>
+  <run_depend>ieee1394libraries</run_depend>
+</package>
+
+

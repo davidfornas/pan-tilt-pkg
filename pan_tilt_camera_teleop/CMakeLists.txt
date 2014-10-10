@@ -1,36 +1,30 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(pan_tilt_camera_teleop)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs geometry_msgs mar_perception)
+find_package(VISP REQUIRED)
 
-rosbuild_init()
+catkin_package(
+  CATKIN_DEPENDS
+    roscpp
+    sensor_msgs
+    geometry_msgs
+    mar_perception
+  DEPENDS
+    VISP
+)
+include_directories(${PROJECT_SOURCE_DIR}/include ${catkin_INCLUDE_DIRS})
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+add_executable(keyboard src/keyboard.cpp src/PanTiltController.cpp)
+add_executable(auto src/auto.cpp src/PanTiltController.cpp)
+add_executable(keyboardToTopic src/keyboardToTopic.cpp src/PanTiltController.cpp)
+add_executable(listener src/main.cpp src/PanTiltController.cpp)
+add_executable(vs src/esm_vs_2d.cpp src/PanTiltController.cpp)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
+target_link_libraries(keyboard ${catkin_LIBRARIES})
+target_link_libraries(auto ${catkin_LIBRARIES})
+target_link_libraries(keyboardToTopic ${catkin_LIBRARIES})
+target_link_libraries(listener ${catkin_LIBRARIES})
+target_link_libraries(vs ${catkin_LIBRARIES})
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-ADD_DEFINITIONS(-DHAVE_LIBDV)
-rosbuild_add_executable(keyboard src/keyboard.cpp src/PanTiltController.cpp)
-rosbuild_add_executable(auto src/auto.cpp src/PanTiltController.cpp)
-rosbuild_add_executable(keyboardToTopic src/keyboardToTopic.cpp src/PanTiltController.cpp)
-rosbuild_add_executable(listener src/main.cpp src/PanTiltController.cpp)
-rosbuild_add_executable(vs src/esm_vs_2d.cpp src/PanTiltController.cpp)
-target_link_libraries(PanTiltController)
 
