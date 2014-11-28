@@ -10,13 +10,11 @@
 #include "iostream"
 #include "string"
 
-#include <cstdio> // standard input / output functions
+#include <stdio.h> // standard input / output functions
 #include <fcntl.h> // File control definitions
 #include <termios.h> // POSIX terminal control definitionss
 #include <time.h>   // time calls
-
-//modificación indigo
-#include <unistd.h> //para poder utilizar el read y write de C
+#include <unistd.h>
 
 using namespace std;
 

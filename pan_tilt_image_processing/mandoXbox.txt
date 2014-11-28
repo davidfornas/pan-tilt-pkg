@@ -1,0 +1,5 @@
+Para ver los botones que estamos pulsando:
+
+rostopic echo /arm_joy
+o
+rostopic echo /arm5e/command_ticks 
