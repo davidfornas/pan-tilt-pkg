@@ -10,8 +10,9 @@ static const std::string OPENCV_WINDOW = "Image window";
 
 
 PanTiltController ptc;
-uint n = 133333;  //milisegundos
+uint n = 153333;  //milisegundos
 bool bandera = false;
+bool _star = false;
 
 
 class ImageConverter
@@ -50,16 +51,24 @@ public:
     }
     
     cv::Scalar tempVal= mean(cv_ptr->image);
-   if(tempVal[0] > 135){
+   if(tempVal[0] > 135 and !_star){
 		ptc.irisCloseStart();
-		usleep(n);			//para poder hacer pausas inferiores al segundo (milisegundos)
-		ptc.irisCloseStop();
 		bandera = true;
+		_star = true;
 	}
-	if(tempVal[0] < 75 && !bandera){
+	else if(tempVal[0] < 75 && !bandera and !_star){
 		ptc.irisOpenStart();
-		usleep(n);
-		ptc.irisOpenStop();
+		_star = true;
+		//usleep(n);
+		//ptc.irisOpenStop();
+	}
+	else{
+		usleep(n);			//para poder hacer pausas inferiores al segundo (milisegundos)
+		if(bandera)
+			ptc.irisCloseStop();
+		else
+			ptc.irisOpenStop();
+		_star = false;
 	}
 	usleep(n);
     std::cout << tempVal[0] << std::endl;

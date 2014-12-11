@@ -16,6 +16,7 @@ catkin_package(
 )
 #add_definitions(${pan_tilt_camera_teleop_DEFINITIONS})
 #INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${pan_tilt_camera_teleop_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${catkin_INCLUDE_DIRS})
 #LINK_DIRECTORIES(${catkin_LIBRARY_DIRS} ${pan_tilt_camera_teleop_LIBRARY_DIRS})
 
 

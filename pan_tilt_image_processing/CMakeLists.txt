@@ -22,6 +22,8 @@ INCLUDE_DIRECTORIES(${catkin_INCLUDE_DIRS})
 
 add_executable(image_converter src/image_converter.cpp)
 target_link_libraries(image_converter ${catkin_LIBRARIES})# ${pan_tilt_camera_teleop_LIBRARIES})
+add_executable(auto_focus src/auto_focus.cpp)
+target_link_libraries(auto_focus ${catkin_LIBRARIES})
 
 
 
