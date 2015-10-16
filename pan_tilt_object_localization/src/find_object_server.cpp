@@ -11,8 +11,10 @@ bool searchObject(pan_tilt_object_localization::FindAnObject::Request  &req,
 
 	ROS_INFO("request: tiempo de busqueda %ld", (long int)req.time);
 
-  //aquí irá el movimiento de la camara y la ejecucion del paquete object_localization
-
+  	//aquí debe ir el movimiento de la camara y la ejecucion del paquete object_localization
+	
+	system("rosrun object_localization surfv");
+	
 	ROS_INFO("sending back response: final de la busqueda");
   return true;
 }
