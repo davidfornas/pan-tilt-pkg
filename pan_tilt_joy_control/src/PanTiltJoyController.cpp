@@ -2,6 +2,7 @@
 #include <sensor_msgs/Joy.h>
 #include <boost/thread.hpp>
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <vector>
 #include <pan_tilt_camera_teleop/PanTiltController.h>
@@ -39,6 +40,7 @@ PanTiltController _ptc;
 
 bool _dir, _bandera = false, _buttons = false;
 int _indice;
+boost::thread active_Surf;
 /*bool _l_joy = false;
 
 
@@ -63,6 +65,36 @@ inline void auxFunction(const float dato){
 	}
 }
 
+
+void activeSurf()
+{
+  std::cout << "Lanzando el Surf" << std::endl;
+  
+  system("rosrun object_localization surfv");
+}
+
+/** Busqueda del nodo /surfv */
+bool findNode()
+{
+	system("rosnode list >> /home/usuario/log.txt");
+	
+	ifstream fich("/home/usuario/log.txt");
+	std::string nodeList;
+	while(!fich.eof()) 
+	{
+		getline(fich, nodeList);
+		std::cout << nodeList << std::endl;
+		if(!nodeList.find("/surfv"))
+		{
+			fich.close();			
+			system("rm /home/usuario/log.txt");
+		 	return true;	
+		}
+	}
+	fich.close();
+	system("rm /home/usuario/log.txt");
+	return false;
+}
 
 
 int compruebaOrden(){
@@ -113,6 +145,14 @@ void envia_Orden(){
 		case 10:
 				std::cout << "BUSCAR OBJETO" << std::endl;
 				system("rosrun pan_tilt_object_localization find_object_client 23");
+			break;
+		case 11:
+				if (findNode())
+				{ 
+					system("rosnode kill surfv");
+					active_Surf.join();
+				}
+				else { boost::thread active_Surf(&activeSurf); }
 			break;
 		case 12:
 				std::cout << "ZOOM-" <<	std::endl;
