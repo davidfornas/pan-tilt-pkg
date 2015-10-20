@@ -1,0 +1,23 @@
+<launch>
+	
+  <!-- PanTiltGrabber  -->
+  <node pkg="pan_tilt_camera_grabber" type="pan_tilt_grabber" name="pan_tilt_grabber">
+    <remap from="/panTilt/camera" to="/panTilt/image_raw"/>
+  </node>
+
+  <!-- PanTiltTeleop  -->
+  <node pkg="pan_tilt_camera_teleop" type="keyboard" name="pan_tilt_camera_teleop">
+    <remap from="/panTilt" to="/keyboard" />
+  </node>
+
+  <!-- Joy -->
+  <node pkg="joy" type="joy_node" name="pan_tilt_joy" >
+    <remap from="/joy" to="/joy" />
+  </node>
+
+  <!--PanTiltJoy -->
+  <node pkg="pan_tilt_joy_control" type="PanTiltJoyController" name="pan_tilt_controller" >
+  	<remp from="/joy" to="/pantijoycontroller" />
+  </node>
+
+</launch>

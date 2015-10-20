@@ -6,7 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <pan_tilt_camera_teleop/PanTiltController.h>
  
-static const std::string OPENCV_WINDOW = "Image window";
+static const std::string OPENCV_WINDOW = "Image Pan-Tilt";
 
 
 PanTiltController ptc;
@@ -34,7 +34,7 @@ public:
 
   ~ImageConverter()
   {
-    cv::destroyWindow(OPENCV_WINDOW);
+    //cv::destroyWindow(OPENCV_WINDOW);
   }
 
   void imageCb(const sensor_msgs::ImageConstPtr& msg)
@@ -74,6 +74,8 @@ public:
     std::cout << tempVal[0] << std::endl;
     bandera = false;
   }
+  //cv::imshow(OPENCV_WINDOW, cv_ptr->image);
+  //cv::waitKey(1);
 };
 
 
