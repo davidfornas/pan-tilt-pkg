@@ -70,7 +70,8 @@ void activeSurf()
 {
   std::cout << "Lanzando el Surf" << std::endl;
   
-  system("rosrun object_localization surfv");
+  system("roslaunch object_localization object_localization_surf.launch");
+  //system("rosrun object_localization surfv");
 }
 
 /** Busqueda del nodo /surfv */
