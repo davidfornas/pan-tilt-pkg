@@ -11,7 +11,7 @@
   	</node>
 
   <!-- PanTiltShowImage  -->
-  <!--	<node pkg="pan_tilt_image_processing" type="show_pan_tilt_image" name="show_pan_tilt_image"> -->
+  <node pkg="pan_tilt_image_processing" type="show_pan_tilt_image" name="show_pan_tilt_image" /> 
     	<!-- <remap from="/panTilt/image_raw" to="/showimage" /> -->
    <!-- </node> -->
 

@@ -19,5 +19,8 @@
   <node pkg="pan_tilt_joy_control" type="PanTiltJoyController" name="pan_tilt_controller" >
   	<remp from="/joy" to="/pantijoycontroller" />
   </node>
+  
+  <!-- PanTiltShowImage  -->
+  <node pkg="pan_tilt_image_processing" type="show_pan_tilt_image" name="show_pan_tilt_image" /> 
 
 </launch>

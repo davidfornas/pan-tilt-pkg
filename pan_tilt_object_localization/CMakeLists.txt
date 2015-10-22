@@ -59,7 +59,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   FindAnObject.srv
-  ActiveSurf.srv
+  #ActiveSurf.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -202,10 +202,10 @@ add_executable(find_object_client src/find_object_client.cpp)
 target_link_libraries(find_object_client ${catkin_LIBRARIES})
 add_dependencies(find_object_client pan_tilt_object_localization_gencpp)
 
-add_executable(active_surf_server src/active_surf_server.cpp)
-target_link_libraries(active_surf_server ${catkin_LIBRARIES})
-add_dependencies(active_surf_server pan_tilt_object_localization_gencpp)
+#add_executable(active_surf_server src/active_surf_server.cpp)
+#target_link_libraries(active_surf_server ${catkin_LIBRARIES})
+#add_dependencies(active_surf_server pan_tilt_object_localization_gencpp)
 
-add_executable(active_surf_client src/active_surf_client.cpp)
-target_link_libraries(active_surf_client ${catkin_LIBRARIES})
-add_dependencies(active_surf_client pan_tilt_object_localization_gencpp)
+#add_executable(active_surf_client src/active_surf_client.cpp)
+#target_link_libraries(active_surf_client ${catkin_LIBRARIES})
+#add_dependencies(active_surf_client pan_tilt_object_localization_gencpp)
