@@ -51,31 +51,31 @@ public:
     }
     
     cv::Scalar tempVal= mean(cv_ptr->image);
-   if(tempVal[0] > 135 and !_star){
-		ptc.irisCloseStart();
-		bandera = true;
-		_star = true;
-	}
-	else if(tempVal[0] < 75 && !bandera and !_star){
-		ptc.irisOpenStart();
-		_star = true;
-		//usleep(n);
-		//ptc.irisOpenStop();
-	}
-	else{
-		usleep(n);			//para poder hacer pausas inferiores al segundo (milisegundos)
-		if(bandera)
-			ptc.irisCloseStop();
-		else
-			ptc.irisOpenStop();
-		_star = false;
-	}
-	usleep(n);
-    std::cout << tempVal[0] << std::endl;
-    bandera = false;
-  }
-  //cv::imshow(OPENCV_WINDOW, cv_ptr->image);
-  //cv::waitKey(1);
+    if(tempVal[0] > 135 and !_star){
+  		ptc.irisCloseStart();
+  		bandera = true;
+  		_star = true;
+  	}
+  	else if(tempVal[0] < 75 && !bandera and !_star){
+  		ptc.irisOpenStart();
+  		_star = true;
+  		//usleep(n);
+  		//ptc.irisOpenStop();
+  	}
+  	else{
+  		usleep(n);			//para poder hacer pausas inferiores al segundo (milisegundos)
+  		if(bandera)
+  			ptc.irisCloseStop();
+  		else
+  			ptc.irisOpenStop();
+  		_star = false;
+  	}
+  	usleep(n);
+      std::cout << tempVal[0] << std::endl;
+      bandera = false;
+    }
+    //cv::imshow(OPENCV_WINDOW, cv_ptr->image);
+    //cv::waitKey(1);
 };
 
 

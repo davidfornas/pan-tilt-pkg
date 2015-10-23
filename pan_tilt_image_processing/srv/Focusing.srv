@@ -1,0 +1,4 @@
+#Time to search
+int64 time
+---
+bool success

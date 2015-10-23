@@ -143,9 +143,13 @@ void envia_Orden(){
 				std::cout << "SUBIR" << std::endl;
 				_ptc.tiltup();}
 			break;
+		case 9:
+				std::cout << "AUTO-FOCUS" << std::endl;
+				system("rosrun pan_tilt_image_processing auto_focus_client 30");
+			break;
 		case 10:
 				std::cout << "BUSCAR OBJETO" << std::endl;
-				system("rosrun pan_tilt_object_localization find_object_client 23");
+				system("rosrun pan_tilt_object_localization find_object_client 28");
 			break;
 		case 11:
 				if (findNode())
@@ -226,7 +230,7 @@ void joy_CallBack(const sensor_msgs::Joy::ConstPtr& joy){
 			findInJoy(joy->axes, 0, 2); //, (float)0.3);
 			if(!_bandera){
 				_buttons = true;
-				findInJoy(joy->buttons, 2, 6); //, (int)1);
+				findInJoy(joy->buttons, 1, 6); //, (int)1);
 			}
 		}
 		else{

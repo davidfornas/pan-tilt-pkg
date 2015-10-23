@@ -4,6 +4,20 @@ project(pan_tilt_image_processing)
 find_package(catkin REQUIRED COMPONENTS cv_bridge image_transport roscpp sensor_msgs std_msgs pan_tilt_camera_teleop)
 #find_package(pan_tilt_camera_teleop REQUIRED)
 
+
+## Generate services in the 'srv' folder
+add_service_files(
+  FILES
+  Focusing.srv
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  #sensor_msgs
+  std_msgs
+)
+
 catkin_package(
   #INCLUDE_DIRS include
   CATKIN_DEPENDS    
@@ -27,6 +41,13 @@ target_link_libraries(auto_focus ${catkin_LIBRARIES})
 add_executable(show_pan_tilt_image src/show_pan_tilt_image.cpp)
 target_link_libraries(show_pan_tilt_image ${catkin_LIBRARIES})
 
+add_executable(auto_focus_server src/auto_focus_server.cpp)
+target_link_libraries(auto_focus_server ${catkin_LIBRARIES})
+add_dependencies(auto_focus_server pan_tilt_image_processing_gencpp)
+
+add_executable(auto_focus_client src/auto_focus_client.cpp)
+target_link_libraries(auto_focus_client ${catkin_LIBRARIES})
+add_dependencies(auto_focus_client pan_tilt_image_processing_gencpp)
 
 
 #install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
