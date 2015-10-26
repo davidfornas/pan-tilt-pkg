@@ -7,7 +7,7 @@
 #include "pan_tilt_object_localization/FindAnObject.h"
 #include <pan_tilt_camera_teleop/PanTiltController.h>
 
-#define SECONDS 20
+#define SECONDS 43
 
 PanTiltController _ptc;
 time_t _initTime;
@@ -22,7 +22,7 @@ void turnCam()
     {
       _ptc.left();
       boost::this_thread::sleep(boost::posix_time::milliseconds(50));
-      _ptc. stopPanTilt();
+      _ptc.stopPanTilt();
     }
   }
     /*if(time(&current) % 2 == 0) _ptc.left();

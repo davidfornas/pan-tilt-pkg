@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <vector>
 #include <pan_tilt_camera_teleop/PanTiltController.h>
+#include <std_msgs/String.h>
 
 #define UMBRAL 0.3
 
@@ -38,7 +39,7 @@
 
 PanTiltController _ptc;
 
-bool _dir, _bandera = false, _buttons = false;
+bool _dir, _bandera = false, _buttons = false, apagado = true;
 int _indice;
 boost::thread active_Surf;
 /*bool _l_joy = false;
@@ -156,8 +157,13 @@ void envia_Orden(){
 				{ 
 					system("rosnode kill surfv");
 					active_Surf.join();
+					apagado = true;
 				}
-				else { boost::thread active_Surf(&activeSurf); }
+				else
+				{ 
+					apagado = false;
+					boost::thread active_Surf(&activeSurf); 
+				}
 			break;
 		case 12:
 				std::cout << "ZOOM-" <<	std::endl;
@@ -254,8 +260,16 @@ int main(int argc, char **argv){
 	ros::NodeHandle n;
 	
 	ros::Subscriber sub_joy = n.subscribe("/joy", 10, joy_CallBack);
+	ros::Publisher pub_joy = n.advertise<std_msgs::String>("/stop/surf", 1);
 	
-	ros::spin();
+	std_msgs::StringPtr str(new std_msgs::String);
+	while(ros::ok())
+	{
+		if(apagado) str->data = "Off"; 
+		else str->data = "On";
+   		pub_joy.publish(str);
+		ros::spinOnce();
+	}
 	
 	return 0;
 }

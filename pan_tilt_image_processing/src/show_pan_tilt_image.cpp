@@ -5,11 +5,13 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp> 
 #include "std_msgs/Float32MultiArray.h"
+#include <std_msgs/String.h>
+#include <fstream>
+#include <boost/thread.hpp>
 
 static const std::string OPENCV_WINDOW = "Image Pan-Tilt";
 cv_bridge::CvImagePtr cv_ptr; 
-bool _dibuja = true;
-
+bool _dibuja;
 
 void showIPTCB(const sensor_msgs::ImageConstPtr& msg)
   {
@@ -19,7 +21,8 @@ void showIPTCB(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-      
+
+    //findNode();
     if (_dibuja)
     {  
       cv::imshow(OPENCV_WINDOW, cv_ptr->image);
@@ -38,6 +41,7 @@ void paintBox(const std_msgs::Float32MultiArray& points)
     scene_corners[i].x = points.data[i++];
     scene_corners[i].y = points.data[i];
   }*/
+  
     scene_corners[0].x = points.data[0];
     scene_corners[0].y = points.data[1];
     scene_corners[1].x = points.data[2];
@@ -51,12 +55,14 @@ void paintBox(const std_msgs::Float32MultiArray& points)
   line(cv_ptr->image,scene_corners[1], scene_corners[2], cv::Scalar(0, 255,0),4);
   line(cv_ptr->image,scene_corners[2], scene_corners[3], cv::Scalar(0, 255,0),4);
   line(cv_ptr->image,scene_corners[3], scene_corners[0], cv::Scalar(0, 255,0),4);
-
+  
   cv::imshow(OPENCV_WINDOW, cv_ptr->image);
   cv::waitKey(1);
-     //std::cout << "Hola Mundo" << std::endl;
-    //std::cout << points << std::endl;
-  _dibuja = true;
+}
+
+void killedSurf(const std_msgs::String& kill)
+{
+  if(kill.data.compare("Off") == 0) _dibuja = true;
 }
 
 
@@ -66,7 +72,11 @@ int main(int argc, char** argv)
   ros::NodeHandle n;
   ros::Subscriber impt = n.subscribe("/panTilt/image_raw", 1, showIPTCB);
   ros::Subscriber points = n.subscribe("/surf/corners_object", 1, paintBox);
-  ros::spin();  
+  ros::Subscriber killed = n.subscribe("/stop/surf", 1, killedSurf);
+  ros::spin();
+  /*while(ros::ok()){
+    ros::spinOnce(); 
+  }*/
 
   return 0;
 }
