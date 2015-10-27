@@ -23,9 +23,9 @@
 																							/
  *	"buttons" vector de 11 elementos. Todos tienen valor 0 en reposo y valor 1 pulsados		/
 	joy->buttons[0] ---->> A																/
-	joy->buttons[1] ---->> B																/
-	joy->buttons[2] ---->> X																/
-	joy->buttons[3] ---->> Y																/
+	joy->buttons[1] ---->> B	---> AUTO-FOCUS												/
+	joy->buttons[2] ---->> X	---> BUSCAR OBJETO											/
+	joy->buttons[3] ---->> Y	---> ON/OFF SURF											/
 	joy->buttons[4] ---->> LB																/
 	joy->buttons[5] ---->> RB																/
 	joy->buttons[6] ---->> BACK																/
@@ -39,7 +39,7 @@
 
 PanTiltController _ptc;
 
-bool _dir, _bandera = false, _buttons = false, apagado = true;
+bool _dir, _bandera = false, _buttons = false;//, apagado = true;
 int _indice;
 boost::thread active_Surf;
 /*bool _l_joy = false;
@@ -157,11 +157,11 @@ void envia_Orden(){
 				{ 
 					system("rosnode kill surfv");
 					active_Surf.join();
-					apagado = true;
+					//apagado = true;
 				}
 				else
 				{ 
-					apagado = false;
+					//apagado = false;
 					boost::thread active_Surf(&activeSurf); 
 				}
 			break;
@@ -260,14 +260,14 @@ int main(int argc, char **argv){
 	ros::NodeHandle n;
 	
 	ros::Subscriber sub_joy = n.subscribe("/joy", 10, joy_CallBack);
-	ros::Publisher pub_joy = n.advertise<std_msgs::String>("/stop/surf", 1);
+	//ros::Publisher pub_joy = n.advertise<std_msgs::String>("/stop/surf", 1);
 	
-	std_msgs::StringPtr str(new std_msgs::String);
+	//std_msgs::StringPtr str(new std_msgs::String);
 	while(ros::ok())
 	{
-		if(apagado) str->data = "Off"; 
-		else str->data = "On";
-   		pub_joy.publish(str);
+		//if(apagado) str->data = "Off"; 
+		//else str->data = "On";
+   		//pub_joy.publish(str);
 		ros::spinOnce();
 	}
 	
