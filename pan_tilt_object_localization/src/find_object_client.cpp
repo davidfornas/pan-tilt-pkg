@@ -37,7 +37,7 @@ void paintBox(const std_msgs::Float32MultiArray& points)
 
     //ROS_INFO("Waiting for action server to start.");
     // wait for the action server to start
-    if(_cont % 5 == 0)
+    if(_cont++ % 5 == 0)
     {
         ac.waitForServer(); //will wait for infinite time
 

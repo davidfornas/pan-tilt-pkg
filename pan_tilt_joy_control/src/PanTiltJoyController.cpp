@@ -150,7 +150,7 @@ void envia_Orden(){
 			break;
 		case 10:
 				std::cout << "BUSCAR OBJETO" << std::endl;
-				system("rosrun pan_tilt_object_localization find_object_client 28");
+				system("rosrun pan_tilt_object_localization find_object_client");
 			break;
 		case 11:
 				if (findNode())
