@@ -5,12 +5,11 @@ project(pan_tilt_object_localization)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
-  image_transport
+  actionlib
+  actionlib_msgs
   message_generation
-  opencv_candidate
   roscpp
-  sensor_msgs
+  rospy
   std_msgs
   pan_tilt_camera_teleop
 )
@@ -56,24 +55,24 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  FindAnObject.srv
-  #ActiveSurf.srv
-)
+# add_service_files(
+#   FILES
+#   Service1.srv
+#   Service2.srv
+# )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
+add_action_files(
+  DIRECTORY action
+  FILES
+    FindAnObject.action
 #   Action1.action
 #   Action2.action
-# )
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES
-  #sensor_msgs
-  std_msgs
+  DEPENDENCIES actionlib_msgs std_msgs
 )
 
 ################################################
@@ -108,7 +107,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pan_tilt_object_localization
-#  CATKIN_DEPENDS cv_bridge image_transport message_generation opnecv_candidate roscpp sensor_msgs std_msgs
+ CATKIN_DEPENDS actionlib_msgs #actionlib message_generation roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -193,19 +192,10 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-
 add_executable(find_object_server src/find_object_server.cpp)
 target_link_libraries(find_object_server ${catkin_LIBRARIES})
-add_dependencies(find_object_server pan_tilt_object_localization_gencpp)
+add_dependencies(find_object_server ${pan_tilt_object_localization_EXPORTED_TARGETS})
 
 add_executable(find_object_client src/find_object_client.cpp)
 target_link_libraries(find_object_client ${catkin_LIBRARIES})
-add_dependencies(find_object_client pan_tilt_object_localization_gencpp)
-
-#add_executable(active_surf_server src/active_surf_server.cpp)
-#target_link_libraries(active_surf_server ${catkin_LIBRARIES})
-#add_dependencies(active_surf_server pan_tilt_object_localization_gencpp)
-
-#add_executable(active_surf_client src/active_surf_client.cpp)
-#target_link_libraries(active_surf_client ${catkin_LIBRARIES})
-#add_dependencies(active_surf_client pan_tilt_object_localization_gencpp)
+add_dependencies(find_object_client ${pan_tilt_object_localization_EXPORTED_TARGETS})
