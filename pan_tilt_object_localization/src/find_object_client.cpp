@@ -14,7 +14,7 @@ uint _cont = 0;
 
 
 bool dimmensionBox() { 
-    if(abs(_scene_corners[0].x - _scene_corners[1].x) * abs(_scene_corners[1].y - _scene_corners[2].y) > 800) 
+    if(abs(_scene_corners[0].x - _scene_corners[1].x) * abs(_scene_corners[1].y - _scene_corners[2].y) > 10000) 
     { 
         _direction = 0; 
         return true;
@@ -37,7 +37,7 @@ void paintBox(const std_msgs::Float32MultiArray& points)
 
     //ROS_INFO("Waiting for action server to start.");
     // wait for the action server to start
-    if(_cont++ % 5 == 0)
+    if(_cont++ % 7 == 0)
     {
         ac.waitForServer(); //will wait for infinite time
 
@@ -48,19 +48,19 @@ void paintBox(const std_msgs::Float32MultiArray& points)
         ac.sendGoal(goal);
 
         //wait for the action to return
-        bool finished_before_timeout = ac.waitForResult(ros::Duration(2.0));    //5 is good
+        bool finished_before_timeout = ac.waitForResult(ros::Duration(6.0));    //6 perhaps good
 
           
         actionlib::SimpleClientGoalState state = ac.getState();
-        if (finished_before_timeout)
+        if (finished_before_timeout and _direction == 0)
         {
             ROS_INFO("Action finished: %s",state.toString().c_str());
-            if (_direction == 0) exit(0);
+            exit(EXIT_SUCCESS);
             //if (state.toString().c_str() == "SUCCEEDED") exit(0);
         }
-        else
+        else if(!finished_before_timeout)
         {
-            ROS_INFO("Object Not Found.");
+            ROS_INFO("TIMEOUT: Object Not Found.");
             std::cout << "GETSTATE: " << state.toString().c_str() << std::endl;
             exit(0);
         }

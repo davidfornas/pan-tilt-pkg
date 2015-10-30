@@ -8,7 +8,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread.hpp>
 
-#define SECONDS 2
+#define SECONDS 1
 
 class FindAnObjectAction
 {
@@ -71,7 +71,8 @@ class FindAnObjectAction
 	    if(success)
 	    {
 	      result_.sequence = feedback_.sequence;
-	      ROS_INFO("%s: Succeeded", action_name_.c_str());
+	      if(goal->direction == 1) ROS_INFO("%s: Succeeded", action_name_.c_str());
+	      if(goal->direction == 0) ROS_INFO("Object Found!!");
 	      // set the action state to succeeded
 	      as_.setSucceeded(result_);
 	    }
