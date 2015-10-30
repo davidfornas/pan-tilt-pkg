@@ -42,6 +42,7 @@ PanTiltController _ptc;
 bool _dir, _bandera = false, _buttons = false;//, apagado = true;
 int _indice;
 boost::thread active_Surf;
+bool _infinity = true;
 /*bool _l_joy = false;
 
 
@@ -145,8 +146,17 @@ void envia_Orden(){
 				_ptc.tiltup();}
 			break;
 		case 9:
-				std::cout << "AUTO-FOCUS" << std::endl;
-				system("rosrun pan_tilt_image_processing auto_focus_client 30");
+				std::cout << "INFINITY-CLOSE-FOCUS" << std::endl;
+				if (_infinity)
+				{
+					_infinity = false;
+					system("rosrun pan_tilt_image_processing infinity_focus_client 1");
+				}
+				else
+				{
+					_infinity = true;
+					system("rosrun pan_tilt_image_processing infinity_focus_client 2");
+				}
 			break;
 		case 10:
 				std::cout << "BUSCAR OBJETO" << std::endl;

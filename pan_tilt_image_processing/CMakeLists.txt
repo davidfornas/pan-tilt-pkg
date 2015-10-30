@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS cv_bridge image_transport roscpp sensor_
 add_service_files(
   FILES
   Focusing.srv
+  InfinityFocus.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -48,6 +49,14 @@ add_dependencies(auto_focus_server pan_tilt_image_processing_gencpp)
 add_executable(auto_focus_client src/auto_focus_client.cpp)
 target_link_libraries(auto_focus_client ${catkin_LIBRARIES})
 add_dependencies(auto_focus_client pan_tilt_image_processing_gencpp)
+
+add_executable(infinity_focus_server src/infinity_focus_server.cpp)
+target_link_libraries(infinity_focus_server ${catkin_LIBRARIES})
+add_dependencies(infinity_focus_server pan_tilt_image_processing_gencpp)
+
+add_executable(infinity_focus_client src/infinity_focus_client.cpp)
+target_link_libraries(infinity_focus_client ${catkin_LIBRARIES})
+add_dependencies(infinity_focus_client pan_tilt_image_processing_gencpp)
 
 
 #install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
