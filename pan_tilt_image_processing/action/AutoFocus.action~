@@ -1,8 +1,0 @@
-#goal definition
-int32 order
----
-#result definition
-double32 mean_abs_sobel
----
-#feedback
-int32 realized
