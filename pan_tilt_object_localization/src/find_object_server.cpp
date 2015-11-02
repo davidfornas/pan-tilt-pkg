@@ -49,12 +49,13 @@ class FindAnObjectAction
 	    bool success = false;
 
 	    // push_back the seeds for the fibonacci sequence
-	    feedback_.sequence.clear();
+	    /*feedback_.sequence.clear();
 	    feedback_.sequence.push_back(0);
-	    feedback_.sequence.push_back(1);
+	    feedback_.sequence.push_back(1);*/
 
 	    // publish info to the console for the user
-	    ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->direction, feedback_.sequence[0], feedback_.sequence[1]);
+	    //ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->direction, feedback_.sequence[0], feedback_.sequence[1]);
+	    ROS_INFO("Executing the object finder");
 
 
 	    std::cout << "GOAL = : " << goal->direction << std::endl;
@@ -70,7 +71,7 @@ class FindAnObjectAction
 
 	    if(success)
 	    {
-	      result_.sequence = feedback_.sequence;
+	      result_.sequence = feedback_.sequence = 0;
 	      if(goal->direction == 1) ROS_INFO("%s: Succeeded", action_name_.c_str());
 	      if(goal->direction == 0) ROS_INFO("Object Found!!");
 	      // set the action state to succeeded
