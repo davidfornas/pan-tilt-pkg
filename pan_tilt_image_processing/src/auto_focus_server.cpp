@@ -1,155 +1,101 @@
+#include <time.h>
+
 #include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <boost/thread.hpp>
-//#include <boost/date_time/posix_time/posix_time.hpp>
-#include <sensor_msgs/image_encodings.h>
-#include <sensor_msgs/CameraInfo.h>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include "arm5_power_control/onOff.h"
+#include <actionlib/server/simple_action_server.h>
+#include <pan_tilt_image_processing/AutoFocusAction.h>
 #include <pan_tilt_camera_teleop/PanTiltController.h>
-//#include "pan_tilt_joy_control/onOff.h"
 
-#include "pan_tilt_image_processing/Focusing.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread.hpp>
 
-#define TIMEOUT 7
- 
-static const std::string OPENCV_WINDOW = "Image window";
-bool _timeout = true;
-PanTiltController _ptc;
+#define SECONDS 1
 
-/*class AutoFocus
+class AutoFocusAction
 {
-  PanTiltController ptc;
-	
-  image_transport::ImageTransport it_;
-  image_transport::Subscriber image_sub_;
-  ros::Subscriber camera_info_sub_;
-  ros::ServiceClient client_;
-  image_transport::Publisher image_pub_;
-  std::string topic1_, topic2_;
-  sensor_msgs::CameraInfo panTiltInfo_;
-  
-public:
-  AutoFocus(ros::NodeHandle &nh, std::string tpc1, std::string tpc2): it_(nh), topic1_(tpc1), topic2_(tpc2)
-  {
-	//ros::NodeHandle n;
-    // Subscrive to input video feed and publish output video feed
-    image_sub_ = it_.subscribe(topic1_, 1, &AutoFocus::autoFocusCb2, this);
-    //camera_info_sub_ = n.subscribe(topic2_, 10, &AutoFocus::cameraCb, this);
-	//client_ = n.serviceClient<arm5_power_control::onOff>("auto_focus");
-    //image_pub_ = it_.advertise("/image_converter/output_video", 1);
+  protected:
 
-    //cv::namedWindow(OPENCV_WINDOW);
-  }
+  	ros::NodeHandle nh_;
+  	// NodeHandle instance must be created before this line. Otherwise strange error may occur.
+  	actionlib::SimpleActionServer<pan_tilt_image_processing::AutoFocusAction> as_; 
+  	std::string action_name_;
+  	// create messages that are used to published feedback/result
+  	pan_tilt_image_processing::AutoFocusFeedback feedback_;
+  	pan_tilt_image_processing::AutoFocusResult result_;
+  	PanTiltController ptc_;
 
-  ~AutoFocus()
-  {
-    cv::destroyWindow(OPENCV_WINDOW);
-  }
-  
-  
-  
-  //Si quiero mostrar la configuración de la cámara
-  void cameraCb(const sensor_msgs::CameraInfo& infoCamera){
-	panTiltInfo_ = infoCamera;
-	  
-	std::cout << panTiltInfo_ << std::endl;	
-  }
-  
+  public:
 
-  bool autoFocusCb2(const sensor_msgs::ImageConstPtr& msg)
-  {
-	boost::thread th1(infinityFocus);
-	sleep(TIMEOUT);
-	_timeout = false;
-	th1.join();
+  	AutoFocusAction(std::string name): as_(nh_, name, boost::bind(&AutoFocusAction::executeCB, this, _1), false), action_name_(name) { as_.start(); }
 
-	return true;
-  }
-  
-  
-  bool autoFocusCb(const sensor_msgs::ImageConstPtr& msg){
-	cv_bridge::CvImagePtr cv_ptr;	//creo la img
-		try{
-			cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-		}
-		catch (cv_bridge::Exception& e){
-			ROS_ERROR("cv_bridge exception: %s", e.what());
-			return;
-		}
-		
-	cv::Mat grey;
-    cvtColor(cv_ptr->image, grey, CV_BGR2GRAY);	//paso la imagen a escala de grises
-	
-	cv::Mat imgSobel;
-	
-	//for (int i = MinFocusValue; i <= MaxFocusValue; Step)
-	//for (int i = 0; i <= 2; i++)
-		Sobel(grey, imgSobel, CV_32F, 1, 0, 3);	//5 es el tamaño del filtro
-	
-	cv::Scalar V = mean(abs(imgSobel));
-	std::cout << V[0] << std::endl;
+    ~AutoFocusAction(void){}
 
-	cv_ptr->image = imgSobel;
-	//imshow("image", imgSobel);
-	//cv::imshow(OPENCV_WINDOW, cv_ptr->image);
-    //cv::waitKey(1);
-    
-    // Output modified video stream
-    //image_pub_.publish(cv_ptr->toImageMsg());
+	void openAndCloseIris(ushort action)
+	{
+	  	time_t initTime, current;
+	  	time(&initTime);
 
-    return 1;
-  }
-};*/
+		while ((time(&current) - initTime) < SECONDS)
+		{
+	  		ptc_.left();
+	    	boost::this_thread::sleep(boost::posix_time::milliseconds(50));
+	    	ptc_.stopPanTilt();
+	    }
+	}
 
-/**Enfoque al infinito en el momento de ejecutar el nodo*/
-void infinityFocus(){
-	_ptc.focusFarStart();
-	while (_timeout){}
-	_ptc.focusFarStop();
-}
+  	void executeCB(const pan_tilt_image_processing::AutoFocusGoalConstPtr &goal)
+  	{
+	    // helper variables
+	    ros::Rate r(1);
+	    bool success = false;
+
+	    // push_back the seeds for the fibonacci sequence
+	    /*feedback_.sequence.clear();
+	    feedback_.sequence.push_back(0);
+	    feedback_.sequence.push_back(1);*/
+
+	    // publish info to the console for the user
+	    //ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
+	    ROS_INFO("Executing the object finder");
 
 
-bool autoFocusCb2()
+	    //std::cout << "GOAL = : " << goal->order << std::endl;
+
+	    switch(goal->order)
+	    {
+	    	case 1:
+	    			ROS_INFO("Executing OPEN Iris");
+	    			//openAndCloseIris(1);
+	      			success = true;
+	    		break;
+	    	case 2:
+	    			ROS_INFO("Executing CLOSE Iris");
+	    			//openAndCloseIris(2);
+	      			success = true;
+	    		break;
+	    	case 0:	
+	    			ROS_INFO("Executing ALGO");
+	      			success = true;
+	    		break;
+	    }
+
+	    if(success)
+	    {
+	      result_.mean_abs_sobel = feedback_.realized = 0;
+	      if(goal->order == 1) ROS_INFO("%s: Succeeded", action_name_.c_str());
+	      if(goal->order == 0) ROS_INFO("Object Found!!");
+	      // set the action state to succeeded
+	      as_.setSucceeded(result_);
+	    }
+  	}
+
+};
+
+
+int main(int argc, char** argv)
 {
-	boost::thread th1(infinityFocus);
-	sleep(TIMEOUT);
-	_timeout = false;
-	th1.join();
-
-	return true;
-}
-
-
-bool focusNow(pan_tilt_image_processing::Focusing::Request  &req,
-		 	  pan_tilt_image_processing::Focusing::Response &res)
-{
-	ROS_INFO("Enfocando");
-	boost::thread enfocando(&infinityFocus);
-	sleep(TIMEOUT);
-	_timeout = false;
-	enfocando.join();
-	//autoFocusCb2();
-	//AutoFocus af(_nh, "/panTilt/image_raw", "/panTilt/camera_info");
-	ROS_INFO("ENFOCADO!!");
-	_timeout = true;
-
-	return 1;
-}
-
-  
-int main (int argc, char** argv){
-	/*boost::thread th1(infinityFocus);
-	sleep(TIMEOUT);
-	_timeout = false;
-	th1.join();*/
-	
 	ros::init(argc, argv, "auto_focus");
-	ros::NodeHandle nh;
-	ros::ServiceServer service = nh.advertiseService("auto_focus", focusNow);
-	
+
+	AutoFocusAction findObject(ros::this_node::getName());
 	ros::spin();
 
 	return 0;
