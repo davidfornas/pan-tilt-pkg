@@ -5,6 +5,8 @@
 
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/CameraInfo.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp> 
@@ -28,6 +30,8 @@ class AutoFocusClient{
     image_transport::Subscriber image_sub_;
 
     std::string topic_;
+    bool init_;
+    double maxValue_;
 
     actionlib::SimpleActionClient<pan_tilt_image_processing::AutoFocusAction> ac_;
 
@@ -39,6 +43,8 @@ class AutoFocusClient{
     { 
         image_sub_ = it_.subscribe(topic_, 1, &AutoFocusClient::imageCB, this); 
         time(&initTime_);
+        init_ = true;
+        maxValue_ = -1;
     }
 
     void imageCB(const sensor_msgs::ImageConstPtr& msg)
@@ -51,69 +57,88 @@ class AutoFocusClient{
         ac.waitForServer(); //will wait for infinite time
 
         pan_tilt_image_processing::AutoFocusGoal goal;
-        // send a goal to the action
-        goal.order = _direction;
-        ac.sendGoal(goal);
-
-        if ( (time(&currentTime_) - initTime_ ) > SECONDS ) 
+        if (init_)
         {
+            // send a goal to the action
+            goal.order = _direction;
+            ac.sendGoal(goal);
+            init_ = false;
+        }
+
+        if ( (time(&currentTime_) - initTime_ ) > SECONDS && !_salir) 
+        {
+            initTime_ = currentTime_;
             if (!_cambio)
             {
+                goal.order = 3;     //paro el Iris cuando abre
+                ac.sendGoal(goal);
+
                 _cambio = true;
                 initTime_ = currentTime_;
                 goal.order = _direction = 2; 
                 std::cout << "CAMBIO!" << std::endl;
+                ac.sendGoal(goal);  //cambio el sentido del Iris
             }
             else
             { 
+                goal.order = 4;     //paro el Iris cuando cierra
+                ac.sendGoal(goal);
+
                 _salir = true;
-                _direction = 0;
-                exit(EXIT_SUCCESS);
+                goal.order = _direction = 1;    //volvemos a enfocar al inifinito
+                ROS_INFO("The maximum Sobel is %f", maxValue_);
+                ac.sendGoal(goal);
+                //exit(EXIT_SUCCESS);
             }
         }
-        /*while(!salir)
+        if(!_salir)
         {
-            ac.waitForServer(); //will wait for infinite time
-
-            ROS_INFO("Action server started, sending goal.");
-            // send a goal to the action
-            goal.order = _direction;
-            ac.sendGoal(goal);
-
-            //wait for the action to return
-            bool finished_before_timeout = ac.waitForResult(ros::Duration(26.0));    //6 perhaps good
-
-              
-            actionlib::SimpleClientGoalState state = ac.getState();
-            if (finished_before_timeout and _direction == 0)
+            double resSobel = calculateSobel(msg); 
+            if ( resSobel > maxValue_){ maxValue_ = resSobel; std::cout << "entra aki?" << std::endl; }
+        }
+        else
+        {   
+            goal.order = 3;     //paro el Iris cuando abre
+            if((abs(maxValue_ - calculateSobel(msg)) < 0.1) )     //or (time(&currentTime_) - initTime_ ) > SECONDS)
             {
-                ROS_INFO("Action finished: %s",state.toString().c_str());
+                ac.sendGoal(goal);
+                ROS_INFO("FOCUSED %f", maxValue_);            
+                goal.order = _direction = 0;
+                ac.sendGoal(goal);
                 exit(EXIT_SUCCESS);
-                //if (state.toString().c_str() == "SUCCEEDED") exit(0);
             }
-            else if(!finished_before_timeout)
+            else if( (time(&currentTime_) - initTime_ ) > SECONDS )
             {
-                ROS_INFO("TIMEOUT: Object Not Found.");
-                std::cout << "GETSTATE: " << state.toString().c_str() << std::endl;
+                ROS_INFO ("DONT FUCUSED :(");
+                ac.sendGoal(goal);
+                usleep(1500);
                 exit(0);
             }
+        }
+    }
 
-            if ( (time(&currentTime) - _initTime ) < SECONDS ) 
-            {
-                if (!cambio)
-                {
-                    cambio = true;
-                    _initTime = currentTime;
-                    goal.order = 2;
-                }
-                else
-                { 
-                    salir = true;
-                    _direction = 0;
-                    exit(EXIT_SUCCESS);
-                }
-            }
-        }*/
+    double calculateSobel(const sensor_msgs::ImageConstPtr& msg)
+    {
+        cv_bridge::CvImagePtr cv_ptr;   //creo la img
+        try{
+            cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+        }
+        catch (cv_bridge::Exception& e){
+            ROS_ERROR("cv_bridge exception: %s", e.what());
+            return -1;
+        }
+            
+        cv::Mat grey;
+        cvtColor(cv_ptr->image, grey, CV_BGR2GRAY); //paso la imagen a escala de grises
+            
+        cv::Mat imgSobel;
+            
+        //for (int i = 0/*MinFocusValue*/; i <= 2/*MaxFocusValue*/; i++/*Step*/)
+        Sobel(grey, imgSobel, CV_32F, 1, 0, 3); //5 es el tamaño del filtro
+            
+        cv::Scalar V = mean(abs(imgSobel));
+        //std::cout << V[0] << std::endl;
+        return V[0];
     }
 
 };

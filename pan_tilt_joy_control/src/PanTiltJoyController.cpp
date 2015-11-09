@@ -22,8 +22,8 @@
 	joy->axes[7] ---->>  cruceta central, eje Y ---> arriba = 1, abajo = -1					/
 																							/
  *	"buttons" vector de 11 elementos. Todos tienen valor 0 en reposo y valor 1 pulsados		/
-	joy->buttons[0] ---->> A																/
-	joy->buttons[1] ---->> B	---> AUTO-FOCUS												/
+	joy->buttons[0] ---->> A	---> AUTO-FOCUS												/
+	joy->buttons[1] ---->> B	---> INFINITY FOCUS											/
 	joy->buttons[2] ---->> X	---> BUSCAR OBJETO											/
 	joy->buttons[3] ---->> Y	---> ON/OFF SURF											/
 	joy->buttons[4] ---->> LB																/
@@ -145,6 +145,9 @@ void envia_Orden(){
 				std::cout << "SUBIR" << std::endl;
 				_ptc.tiltup();}
 			break;
+		case 8:
+				system("rosrun pan_tilt_image_processing auto_focus_client");
+			break;
 		case 9:
 				std::cout << "INFINITY-CLOSE-FOCUS" << std::endl;
 				if (_infinity)
@@ -246,7 +249,7 @@ void joy_CallBack(const sensor_msgs::Joy::ConstPtr& joy){
 			findInJoy(joy->axes, 0, 2); //, (float)0.3);
 			if(!_bandera){
 				_buttons = true;
-				findInJoy(joy->buttons, 1, 6); //, (int)1);
+				findInJoy(joy->buttons, 0, 6); //, (int)1);
 			}
 		}
 		else{

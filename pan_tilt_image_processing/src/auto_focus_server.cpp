@@ -29,18 +29,10 @@ class AutoFocusAction
 
     ~AutoFocusAction(void){}
 
-	void openAndCloseIris(ushort action)
-	{
-	  	time_t initTime, current;
-	  	time(&initTime);
-
-		while ((time(&current) - initTime) < SECONDS)
-		{
-	  		ptc_.left();
-	    	boost::this_thread::sleep(boost::posix_time::milliseconds(50));
-	    	ptc_.stopPanTilt();
-	    }
-	}
+	void openIris(){ ptc_.focusNearStop(); ptc_.focusFarStart(); }
+	void closeIris(){ ptc_.focusFarStop(); ptc_.focusNearStart(); }
+	void stopOpen(){ ptc_.focusFarStop(); }
+	void stopClose(){ ptc_.focusNearStop(); }
 
   	void executeCB(const pan_tilt_image_processing::AutoFocusGoalConstPtr &goal)
   	{
@@ -55,7 +47,7 @@ class AutoFocusAction
 
 	    // publish info to the console for the user
 	    //ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
-	    ROS_INFO("Executing the object finder");
+	    ROS_INFO("Executing the AUTO-FOCUS");
 
 
 	    //std::cout << "GOAL = : " << goal->order << std::endl;
@@ -63,17 +55,37 @@ class AutoFocusAction
 	    switch(goal->order)
 	    {
 	    	case 1:
-	    			ROS_INFO("Executing OPEN Iris");
 	    			//openAndCloseIris(1);
+	    			ROS_INFO("Executing OPEN Iris");
+	    			//stopClose();
+	    			//openIris();
+	    			ptc_.focusFarStart();
 	      			success = true;
 	    		break;
 	    	case 2:
 	    			ROS_INFO("Executing CLOSE Iris");
 	    			//openAndCloseIris(2);
+	    			//stopOpen();
+	    			//closeIris();
+	    			ptc_.focusNearStart(); 
+	      			success = true;
+	    		break;
+	    	case 3:
+	    			ROS_INFO("STOPING OPEN IRIS");
+	    			//stopOpen();
+	    			ptc_.focusFarStop(); 
+	      			success = true;
+	    		break;
+	    	case 4:
+	    			ROS_INFO("STOPING CLOSE IRIS");
+	    			//stopClose();
+	    			ptc_.focusNearStop(); 
 	      			success = true;
 	    		break;
 	    	case 0:	
 	    			ROS_INFO("Executing ALGO");
+	    			//stopClose();
+	    			stopOpen();
 	      			success = true;
 	    		break;
 	    }
@@ -82,7 +94,7 @@ class AutoFocusAction
 	    {
 	      result_.mean_abs_sobel = feedback_.realized = 0;
 	      if(goal->order == 1) ROS_INFO("%s: Succeeded", action_name_.c_str());
-	      if(goal->order == 0) ROS_INFO("Object Found!!");
+	      if(goal->order == 0) ROS_INFO("Focused!!");
 	      // set the action state to succeeded
 	      as_.setSucceeded(result_);
 	    }
