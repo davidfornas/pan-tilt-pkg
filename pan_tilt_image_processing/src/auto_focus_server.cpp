@@ -29,63 +29,39 @@ class AutoFocusAction
 
     ~AutoFocusAction(void){}
 
-	void openIris(){ ptc_.focusNearStop(); ptc_.focusFarStart(); }
-	void closeIris(){ ptc_.focusFarStop(); ptc_.focusNearStart(); }
-	void stopOpen(){ ptc_.focusFarStop(); }
-	void stopClose(){ ptc_.focusNearStop(); }
-
   	void executeCB(const pan_tilt_image_processing::AutoFocusGoalConstPtr &goal)
   	{
 	    // helper variables
 	    ros::Rate r(1);
 	    bool success = false;
 
-	    // push_back the seeds for the fibonacci sequence
-	    /*feedback_.sequence.clear();
-	    feedback_.sequence.push_back(0);
-	    feedback_.sequence.push_back(1);*/
-
-	    // publish info to the console for the user
-	    //ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
 	    ROS_INFO("Executing the AUTO-FOCUS");
-
-
-	    //std::cout << "GOAL = : " << goal->order << std::endl;
 
 	    switch(goal->order)
 	    {
 	    	case 1:
-	    			//openAndCloseIris(1);
-	    			ROS_INFO("Executing OPEN Iris");
-	    			//stopClose();
-	    			//openIris();
 	    			ptc_.focusFarStart();
+	    			ROS_INFO("Executing focus FAR");
 	      			success = true;
 	    		break;
 	    	case 2:
-	    			ROS_INFO("Executing CLOSE Iris");
-	    			//openAndCloseIris(2);
-	    			//stopOpen();
-	    			//closeIris();
 	    			ptc_.focusNearStart(); 
+	    			ROS_INFO("Executing focus CLOSE");
 	      			success = true;
 	    		break;
 	    	case 3:
-	    			ROS_INFO("STOPING OPEN IRIS");
-	    			//stopOpen();
 	    			ptc_.focusFarStop(); 
+	    			ROS_INFO("STOPING FOCUS FAR");
 	      			success = true;
 	    		break;
 	    	case 4:
-	    			ROS_INFO("STOPING CLOSE IRIS");
-	    			//stopClose();
 	    			ptc_.focusNearStop(); 
+	    			ROS_INFO("STOPING FOCUS CLOSE");
 	      			success = true;
 	    		break;
 	    	case 0:	
-	    			ROS_INFO("Executing ALGO");
-	    			//stopClose();
-	    			stopOpen();
+	    			ptc_.focusFarStop();
+	    			ROS_INFO("STOP");
 	      			success = true;
 	    		break;
 	    }

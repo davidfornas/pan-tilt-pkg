@@ -11,12 +11,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp> 
 
-#include "std_msgs/Float32MultiArray.h"
-
 #include <time.h>
 
-#define SECONDS 7
-//std::vector<cv::Point2f> _scene_corners(4);
+#define SECONDS 8
+
 uint _direction = 1;
 uint _cont = 0;
 bool _salir = false, _cambio = false;
@@ -70,25 +68,28 @@ class AutoFocusClient{
             initTime_ = currentTime_;
             if (!_cambio)
             {
-                goal.order = 3;     //paro el Iris cuando abre
+                goal.order = 3;     //paro el enfoque cuando abre
                 ac.sendGoal(goal);
+
+                sleep(1);   //pausa para asegurarnos de que no hay conflicto entre el envio de la orden parar y marcha
 
                 _cambio = true;
                 initTime_ = currentTime_;
                 goal.order = _direction = 2; 
                 std::cout << "CAMBIO!" << std::endl;
-                ac.sendGoal(goal);  //cambio el sentido del Iris
+                ac.sendGoal(goal);  //cambio el sentido del enfoque
             }
             else
             { 
-                goal.order = 4;     //paro el Iris cuando cierra
+                goal.order = 4;     //paro el enfoque cuando cierra
                 ac.sendGoal(goal);
+
+                sleep(1);
 
                 _salir = true;
                 goal.order = _direction = 1;    //volvemos a enfocar al inifinito
                 ROS_INFO("The maximum Sobel is %f", maxValue_);
                 ac.sendGoal(goal);
-                //exit(EXIT_SUCCESS);
             }
         }
         if(!_salir)
@@ -98,10 +99,13 @@ class AutoFocusClient{
         }
         else
         {   
-            goal.order = 3;     //paro el Iris cuando abre
-            if((abs(maxValue_ - calculateSobel(msg)) < 0.1) )     //or (time(&currentTime_) - initTime_ ) > SECONDS)
+            goal.order = 3;     //paro el enfoque cuando abre
+            if((abs(maxValue_ - calculateSobel(msg)) < 0.1) )
             {
                 ac.sendGoal(goal);
+
+                sleep(1);
+
                 ROS_INFO("FOCUSED %f", maxValue_);            
                 goal.order = _direction = 0;
                 ac.sendGoal(goal);
@@ -133,8 +137,7 @@ class AutoFocusClient{
             
         cv::Mat imgSobel;
             
-        //for (int i = 0/*MinFocusValue*/; i <= 2/*MaxFocusValue*/; i++/*Step*/)
-        Sobel(grey, imgSobel, CV_32F, 1, 0, 3); //5 es el tamaño del filtro
+        Sobel(grey, imgSobel, CV_32F, 1, 0, 3);     //el último valor es el tamaño del filtro
             
         cv::Scalar V = mean(abs(imgSobel));
         //std::cout << V[0] << std::endl;
@@ -148,10 +151,8 @@ int main (int argc, char **argv)
 {
     ros::init(argc, argv, "auto_focus_client");
 
-    //ros::NodeHandle nh;
-    //ros::Subscriber points = nh.subscribe("/panTilt/image_raw", 1, paintBox);
     AutoFocusClient ac("/panTilt/image_raw");
     ros::spin();
-    //exit
+
     return 0;
 }
