@@ -28,7 +28,7 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>visp</run_depend>
   <run_depend>mar_perception</run_depend>
-  
+
 </package>
 
 

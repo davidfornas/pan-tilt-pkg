@@ -1,0 +1,18 @@
+<launch>
+	
+  <!-- PanTiltGrabber  -->
+	<node pkg="pan_tilt_camera_grabber" type="pan_tilt_grabber" name="pan_tilt_grabber">
+		<remap from="/panTilt/camera" to="/panTilt/image_raw" />
+	</node>
+
+  <!-- PanTiltTeleop  -->
+  	<node pkg="pan_tilt_camera_teleop" type="keyboard" name="pan_tilt_camera_teleop">
+    	<remap from="/panTilt" to="/keyboard" />
+  	</node>
+
+  <!-- PanTiltShowImage  -->
+  <node pkg="pan_tilt_image_processing" type="show_pan_tilt_image" name="show_pan_tilt_image" /> 
+    	<!-- <remap from="/panTilt/image_raw" to="/showimage" /> -->
+   <!-- </node> -->
+
+</launch>

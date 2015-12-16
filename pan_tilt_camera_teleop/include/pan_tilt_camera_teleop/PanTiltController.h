@@ -14,6 +14,7 @@
 #include <fcntl.h> // File control definitions
 #include <termios.h> // POSIX terminal control definitionss
 #include <time.h>   // time calls
+#include <unistd.h>
 
 using namespace std;
 

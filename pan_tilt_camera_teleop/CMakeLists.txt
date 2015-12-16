@@ -6,7 +6,8 @@ find_package(VISP REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS
-    include
+    include 
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS
     roscpp
     sensor_msgs
@@ -26,5 +27,11 @@ target_link_libraries(keyboard ${catkin_LIBRARIES})
 target_link_libraries(keyboardToTopic ${catkin_LIBRARIES})
 target_link_libraries(listener ${catkin_LIBRARIES})
 target_link_libraries(vs ${catkin_LIBRARIES})
+
+
+add_library(${PROJECT_NAME} 
+src/PanTiltController.cpp
+)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})# ${PCL_LIBRARIES} ${OpenCV_INCLUDE_DIRS})
 
 
